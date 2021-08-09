@@ -1,0 +1,27 @@
+{
+  "name": "aitradeinc/symfony-entity-generator",
+  "description": "Convert DB tables to entities",
+  "type": "library",
+  "license": "MIT",
+  "bin": ["bin/entity-generator"],
+  "authors": [
+    {
+      "name": "Chirag Raninga",
+      "email": "chiragraninga@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^7.4",
+    "greenlion/php-sql-parser": "^4.3",
+    "nyholm/dsn": "^1.0",
+    "symfony/console": "^4.0|^5.0",
+    "symfony/filesystem": "^4.0|^5.0",
+    "twig/twig": "^2.12|^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "EntityGenerator\\": "src/"
+    }
+  }
+}
