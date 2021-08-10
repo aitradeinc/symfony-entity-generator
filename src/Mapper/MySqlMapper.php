@@ -93,7 +93,8 @@ class MySqlMapper implements MapperInterface
             }
         }
 
-        $column = new Column($name, $type, $comment, $nullable, $generated, $unsigned, $length, $precision, $scale);
+        $column = new Column($name, (string)$type, $comment, $nullable, $generated, $unsigned, $length, $precision,
+        $scale);
 
         $entity->addColumn($column);
     }
