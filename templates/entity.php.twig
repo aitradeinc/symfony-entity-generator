@@ -43,10 +43,8 @@ class {{ entity.table|entity_name }}
 {% else %}
     /**
      * @ORM\OneToMany(targetEntity="{{ reference.table|entity_name }}", mappedBy="{{ reference.referencedColumn|relate|camelize }}")
-     *
-     * @var {{ collectionInterface }}<\{{ namespace }}\{{ reference.table|entity_name }}>
      */
-    private ${{ reference.table|camelize|pluralize }};
+    private ${{ column.name|camelize|pluralize }};
 
 {% endif %}
 {% endfor %}

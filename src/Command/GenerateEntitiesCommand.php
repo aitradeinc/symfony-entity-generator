@@ -53,6 +53,9 @@ class GenerateEntitiesCommand extends Command
 
         /** @var Entity $entity */
         foreach ($generator->generateEntities() as $entity) {
+            if(strpos($entity->getTable(), 'migration_versions')) {
+                continue;
+            }
             $fileName = $outputDirection . '/' . Namer::entityName($entity->getTable()) . '.php';
             $class = $renderer->render($entity, $namespace, $collectionInterface, $collectionImplementation);
             $filesystem->dumpFile($fileName, $class);
