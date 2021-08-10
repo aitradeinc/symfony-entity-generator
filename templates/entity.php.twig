@@ -35,8 +35,6 @@ class {{ entity.table|entity_name }}
     /**
      * @ORM\ManyToOne(targetEntity="{{ reference.table|entity_name }}", inversedBy="{{ entity.table|camelize|pluralize }}")
      * @ORM\JoinColumn(name="{{ reference.column }}", referencedColumnName="{{ reference.referencedColumn }}")
-     *
-     * @var \{{ namespace }}\{{ reference.table|entity_name }}{{ reference.nullable ? '|null' }}
      */
     private ${{ reference.column|relate|camelize }};
 
