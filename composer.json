@@ -10,6 +10,12 @@
       "email": "chiragraninga@gmail.com"
     }
   ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git://github.com/aitradeinc/symfony-entity-generator.git"
+    }
+  ],
   "minimum-stability": "dev",
   "require": {
     "php": "^7.4",
