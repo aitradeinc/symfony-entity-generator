@@ -25,8 +25,7 @@ class GenerateEntitiesCommand extends Command
             ->addOption('namespace', null, InputOption::VALUE_REQUIRED, 'Namespace', 'App\\Entity')
             ->addOption('directory', null, InputOption::VALUE_REQUIRED, 'Output directory', 'src\\Entity')
             ->addOption('collection-implementation', null, InputOption::VALUE_REQUIRED, 'Collection implementation', '\\Doctrine\\Common\\Collections\\ArrayCollection')
-            ->addOption('collection-interface', null, InputOption::VALUE_REQUIRED, 'Collection interface', '\\Doctrine\\Common\\Collections\\Collection')
-            ->addOption('prefix',null, InputOption::VALUE_OPTIONAL, 'Remove prefix from reference table');
+            ->addOption('collection-interface', null, InputOption::VALUE_REQUIRED, 'Collection interface', '\\Doctrine\\Common\\Collections\\Collection');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
@@ -36,7 +35,6 @@ class GenerateEntitiesCommand extends Command
         $collectionImplementation = $input->getOption('collection-implementation');
         $collectionInterface = $input->getOption('collection-interface');
         $outputDirection = $input->getOption('directory');
-        $prefix = $input->getOption('prefix');
 
         if (!$dsnInput) {
             throw new \InvalidArgumentException('A DSN is required');
@@ -58,25 +56,11 @@ class GenerateEntitiesCommand extends Command
             if (strpos($entity->getTable(), 'migration_versions')) {
                 continue;
             }
-            if(!empty($prefix)) {
-                $this->removePrefixFromReference($entity, $prefix);
-            }
             $fileName = $outputDirection . '/' . Namer::entityName($entity->getTable()) . '.php';
             $class = $renderer->render($entity, $namespace, $collectionInterface, $collectionImplementation);
             $filesystem->dumpFile($fileName, $class);
         }
 
         return 0;
-    }
-
-    private function removePrefixFromReference(Entity $entity, string $prefix)
-    {
-        if(!empty($references = $entity->getReferences())) {
-            foreach ($references as $reference) {
-                if(!$reference->isOwningSide()) {
-                    $table = str_replace($prefix.'_','',$reference->getTable());
-                }
-            }
-        }
     }
 }
