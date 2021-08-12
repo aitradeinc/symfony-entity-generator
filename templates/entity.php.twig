@@ -42,7 +42,7 @@ class {{ entity.table|entity_name }}
     /**
      * @ORM\OneToMany(targetEntity="{{ reference.table|entity_name }}", mappedBy="{{ reference.referencedColumn|relate|camelize }}")
      */
-    private ${{ column.name|camelize|pluralize }};
+    private ${{ reference.table|camelize|pluralize }};
 
 {% endif %}
 {% endfor %}
@@ -61,9 +61,11 @@ class {{ entity.table|entity_name }}
         return $this->{{ column.name|camelize }};
     }
 
-    public function set{{ column.name|camelize|ucfirst }}({{ column|php_type }} ${{ column.name|camelize }}): void
+    public function set{{ column.name|camelize|ucfirst }}({{ column|php_type }} ${{ column.name|camelize }}): self
     {
         $this->{{ column.name|camelize }} = ${{ column.name|camelize }};
+
+        return $this;
     }
 
 {% endfor %}
@@ -74,47 +76,59 @@ class {{ entity.table|entity_name }}
         return $this->{{ reference.column|relate|camelize }};
     }
 
-    public function set{{ reference.column|relate|camelize|ucfirst }}({{ reference.nullable ? '?' }}\{{ namespace }}\{{ reference.table|entity_name }} ${{ reference.column|relate|camelize }}): void
-    {
+        public function set{{ reference.column|relate|camelize|ucfirst }}({{ reference.nullable ? '?' }}\{{ namespace
+    }}\{{ reference.table|entity_name }} ${{ reference.column|relate|camelize }}): self
+        {
         $this->{{ reference.column|relate|camelize }} = ${{ reference.column|relate|camelize }};
-    }
 
-{% else %}
-    /**
-     * @return {{ collectionInterface }}<\{{ namespace }}\{{ reference.table|entity_name }}>|\{{ namespace }}\{{ reference.table|entity_name }}[]
-     */
-    public function get{{ reference.table|camelize|ucfirst|pluralize }}(): {{ collectionInterface }}
-    {
+        return $this;
+        }
+
+    {% else %}
+        /**
+        * @return {{ collectionInterface }}|\{{ namespace }}\{{ reference.table|entity_name }}[]
+        */
+        public function get{{ reference.table|camelize|ucfirst|pluralize }}(): {{ collectionInterface }}
+        {
         return $this->{{ reference.table|camelize|pluralize }};
-    }
+        }
 
-    /**
-     * @param {{ collectionInterface }}<\{{ namespace }}\{{ reference.table|entity_name }}>|\{{ namespace }}\{{ reference.table|entity_name }}[]
-     */
-    public function set{{ reference.table|camelize|ucfirst|pluralize }}(iterable ${{ reference.table|camelize|pluralize }}): void
-    {
+        /**
+        * @param {{ collectionInterface }}<\{{ namespace }}\{{ reference.table|entity_name }}>|\{{ namespace }}\{{ reference.table|entity_name }}[]
+        */
+        public function set{{ reference.table|camelize|ucfirst|pluralize }}(iterable ${{ reference
+    .table|camelize|pluralize }}): self
+        {
         if (\is_array(${{ reference.table|camelize|pluralize }})) {
-            ${{ reference.table|camelize|pluralize }} = new {{ collectionImplementation }}(${{ reference.table|camelize|pluralize }});
+        ${{ reference.table|camelize|pluralize }} = new {{ collectionImplementation }}(${{ reference.table|camelize|pluralize }});
         }
 
         $this->{{ reference.table|camelize|pluralize }} = ${{ reference.table|camelize|pluralize }};
-    }
 
-    /**
-    * @param {{ reference.table|entity_name }}
-    */
-    public function add{{ reference.table|camelize|ucfirst }}(\{{ namespace }}\{{ reference.table|entity_name }} ${{ reference.table|camelize }}): void
-    {
+        return $this;
+        }
+
+        /**
+        * @param {{ reference.table|entity_name }}
+        */
+        public function add{{ reference.table|camelize|ucfirst }}(\{{ namespace }}\{{ reference.table|entity_name }} ${{
+    reference.table|camelize }}): self
+        {
         $this->{{ reference.table|camelize|pluralize }}->add(${{ reference.table|camelize }});
-    }
 
-    /**
-    * @param {{ reference.table|entity_name }}
-    */
-    public function remove{{ reference.table|camelize|ucfirst }}(\{{ namespace }}\{{ reference.table|entity_name }} ${{ reference.table|camelize }}): void
-    {
+        return $this;
+        }
+
+        /**
+        * @param {{ reference.table|entity_name }}
+        */
+        public function remove{{ reference.table|camelize|ucfirst }}(\{{ namespace }}\{{ reference.table|entity_name }}
+        ${{ reference.table|camelize }}): self
+        {
         $this->{{ reference.table|camelize|pluralize }}->removeElement(${{ reference.table|camelize }});
-    }
+
+        return $this;
+        }
 
 {% endif %}
 {% endfor %}

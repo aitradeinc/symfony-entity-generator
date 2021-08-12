@@ -41,6 +41,8 @@ class TypeMapper
             case 'date':
             case 'datetime':
                 return 'datetime';
+            case 'json':
+                return 'json';
         }
 
         return '';
@@ -68,6 +70,8 @@ class TypeMapper
             case 'date':
             case 'datetime':
                 return '\\DateTime';
+            case 'json':
+                return 'array';
         }
 
         return '';
