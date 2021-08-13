@@ -34,6 +34,9 @@ class Column
     /** @var bool */
     private $isId = false;
 
+    /** @var bool */
+    private $isUnique = false;
+
     public function __construct(
         string $name,
         string $type,
@@ -140,5 +143,18 @@ class Column
     public function markId(): void
     {
         $this->isId = true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUnique(): bool
+    {
+        return $this->isUnique;
+    }
+
+    public function markUnique(): void
+    {
+        $this->isUnique = true;
     }
 }

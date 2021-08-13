@@ -68,6 +68,9 @@ class MySqlMapper implements MapperInterface
                     $nullable = $tree['nullable'];
                     $generated = $tree['auto_inc'];
                     $comment = $tree['comment'] ?? null;
+                    if(isset($tree['default'])) {
+                        $options['default'] = $tree['default'];
+                    }
 
                     foreach ($tree['sub_tree'] as $subTree) {
                         switch ($subTree['expr_type']) {
@@ -109,6 +112,25 @@ class MySqlMapper implements MapperInterface
                             case 'index-column':
                                 $name = $subTree['no_quotes']['parts'][0];
                                 $entity->getColumn($name)->markId();
+                                break;
+                        }
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    private function mapUniqueKey(Entity $entity, array $primaryKey): void
+    {
+        foreach ($primaryKey['sub_tree'] as $tree) {
+            switch ($tree['expr_type']) {
+                case 'column-list':
+                    foreach ($tree['sub_tree'] as $subTree) {
+                        switch ($subTree['expr_type']) {
+                            case 'index-column':
+                                $name = $subTree['no_quotes']['parts'][0];
+                                $entity->getColumn($name)->markUnique();
                                 break;
                         }
                     }

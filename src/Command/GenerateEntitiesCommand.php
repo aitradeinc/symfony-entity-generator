@@ -24,8 +24,8 @@ class GenerateEntitiesCommand extends Command
             ->addOption('dsn', null, InputOption::VALUE_REQUIRED, 'DSN')
             ->addOption('namespace', null, InputOption::VALUE_REQUIRED, 'Namespace', 'App\\Entity')
             ->addOption('directory', null, InputOption::VALUE_REQUIRED, 'Output directory', 'src\\Entity')
-            ->addOption('collection-implementation', null, InputOption::VALUE_REQUIRED, 'Collection implementation', '\\Doctrine\\Common\\Collections\\ArrayCollection')
-            ->addOption('collection-interface', null, InputOption::VALUE_REQUIRED, 'Collection interface', '\\Doctrine\\Common\\Collections\\Collection');
+            ->addOption('collection-implementation', null, InputOption::VALUE_REQUIRED, 'Collection implementation', 'Doctrine\\Common\\Collections\\ArrayCollection')
+            ->addOption('collection-interface', null, InputOption::VALUE_REQUIRED, 'Collection interface', 'Doctrine\\Common\\Collections\\Collection');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
