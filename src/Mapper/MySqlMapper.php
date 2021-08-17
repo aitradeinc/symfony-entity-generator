@@ -20,6 +20,9 @@ class MySqlMapper implements MapperInterface
     public function map(string $createStatement): Entity
     {
         $parsed = $this->parser->parse($createStatement);
+//        if($parsed['TABLE']['name'] == '`user_user`') {
+//            dd($parsed);
+//        }
         $createDef = $parsed['TABLE']['create-def'];
 
         $entity = new Entity($parsed['TABLE']['no_quotes']['parts'][0]);
@@ -33,6 +36,8 @@ class MySqlMapper implements MapperInterface
                     $this->mapPrimaryKey($entity, $tree);
                     break;
                 case 'unique-index':
+                    $this->mapUniqueKey($entity, $tree);
+                    break;
                 case 'index':
                     break;
                 case 'foreign-key':
@@ -58,6 +63,7 @@ class MySqlMapper implements MapperInterface
         $length = null;
         $precision = null;
         $scale = null;
+        $options = [];
 
         foreach ($columnDef['sub_tree'] as $tree) {
             switch ($tree['expr_type']) {
@@ -96,8 +102,18 @@ class MySqlMapper implements MapperInterface
             }
         }
 
-        $column = new Column($name, (string)$type, $comment, $nullable, $generated, $unsigned, $length, $precision,
-        $scale);
+        $column = new Column(
+            $name,
+            (string)$type,
+            $comment,
+            $nullable,
+            $generated,
+            $unsigned,
+            $length,
+            $precision,
+            $scale,
+            $options
+        );
 
         $entity->addColumn($column);
     }
@@ -130,11 +146,14 @@ class MySqlMapper implements MapperInterface
                         switch ($subTree['expr_type']) {
                             case 'index-column':
                                 $name = $subTree['no_quotes']['parts'][0];
-                                $entity->getColumn($name)->markUnique();
+//                                if($entity->getTable()=="user_user") {
+//                                    dd($primaryKey);
+//                                }
+                                $options['unique'] = true;
+                                $entity->getColumn($name)->setOptions($options);
                                 break;
                         }
                     }
-
                     break;
             }
         }

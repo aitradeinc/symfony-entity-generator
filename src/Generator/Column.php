@@ -34,6 +34,8 @@ class Column
     /** @var bool */
     private $isId = false;
 
+    private $options;
+
     /** @var bool */
     private $isUnique = false;
 
@@ -46,7 +48,8 @@ class Column
         bool $unsigned,
         ?int $length,
         ?int $precision,
-        ?int $scale
+        ?int $scale,
+        array $options = []
     )
     {
         $this->name = $name;
@@ -58,6 +61,7 @@ class Column
         $this->length = $length;
         $this->precision = $precision;
         $this->scale = $scale;
+        $this->options = $options;
     }
 
     /**
@@ -143,6 +147,16 @@ class Column
     public function markId(): void
     {
         $this->isId = true;
+    }
+
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+    }
+
+    public function getOptions(): string
+    {
+        return json_encode($this->options);
     }
 
     /**

@@ -25,8 +25,12 @@ class {{ entity.table|entity_name }}
 {% if column.isId and column.isGenerated %}
      * @ORM\GeneratedValue
 {% endif %}
-     * @ORM\Column(type="{{ column|doctrine_type }}",{{ column.length ? ' length=' ~ column.length ~ ',' }}{{ column.precision ? ' precision=' ~ column.precision ~ ',' }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }} nullable={{ column.nullable ? 'true' : 'false'}}, options={ {{ column.unsigned ? '"unsigned": true' }} })
+{% autoescape false %}
+     * @ORM\Column(type="{{ column|doctrine_type }}",{{ column.length ? ' length=' ~ column.length ~ ',' }}{{ column
+.precision ? ' precision=' ~ column.precision ~ ',' }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }}{{column
+.nullable ? 'nullable=true,'}}{{ column.options ? 'options=' ~ column.options|replace({'"':''}) }})
      */
+{% endautoescape %}
     private ${{ column.name|camelize }};
 
 {% endfor %}
@@ -106,7 +110,7 @@ class {{ entity.table|entity_name }}
     {
         if ($this->{{ reference.table|camelize|pluralize }}->contains(${{ reference.table|camelize }})) {
             $this->{{ reference.table|camelize|pluralize }}->removeElement(${{ reference.table|camelize }});
-                if(${{ reference.table|camelize }}->get{{ reference.referencedColumn|relate|camelize|ucfirst }}() === $this) {
+            if(${{ reference.table|camelize }}->get{{ reference.referencedColumn|relate|camelize|ucfirst }}() === $this) {
                 ${{ reference.table|camelize }}->set{{ reference.referencedColumn|relate|camelize|ucfirst }}(null);
             }
         }
