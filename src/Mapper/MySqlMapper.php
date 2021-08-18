@@ -20,9 +20,6 @@ class MySqlMapper implements MapperInterface
     public function map(string $createStatement): Entity
     {
         $parsed = $this->parser->parse($createStatement);
-//        if($parsed['TABLE']['name'] == '`user_user`') {
-//            dd($parsed);
-//        }
         $createDef = $parsed['TABLE']['create-def'];
 
         $entity = new Entity($parsed['TABLE']['no_quotes']['parts'][0]);
@@ -146,9 +143,6 @@ class MySqlMapper implements MapperInterface
                         switch ($subTree['expr_type']) {
                             case 'index-column':
                                 $name = $subTree['no_quotes']['parts'][0];
-//                                if($entity->getTable()=="user_user") {
-//                                    dd($primaryKey);
-//                                }
                                 $options['unique'] = true;
                                 $entity->getColumn($name)->setOptions($options);
                                 break;
