@@ -26,6 +26,7 @@ class TypeMapper
                 return $column->getLength() === 1 ? 'boolean' : 'integer';
             case 'smallint':
             case 'bigint':
+                return 'bigint';
             case 'int':
                 return 'integer';
             case 'decimal':
@@ -56,24 +57,23 @@ class TypeMapper
             case 'tinyint':
                 return $column->getLength() === 1 ? 'bool' : 'int';
             case 'smallint':
-            case 'bigint':
             case 'int':
                 return 'int';
             case 'double':
             case 'decimal':
                 return 'float';
+            case 'bigint':
             case 'char':
             case 'varchar':
             case 'text':
             case 'mediumtext':
+            case 'json':
             case 'longtext':
                 return 'string';
             case 'timestamp':
             case 'date':
             case 'datetime':
                 return '\\DateTime';
-            case 'json':
-                return 'array';
         }
 
         return '';

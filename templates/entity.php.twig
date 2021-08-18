@@ -16,7 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="{{ entity.table }}")
  * @ORM\Entity(repositoryClass={{ repository|entity_name }}::class)
  */
-class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser' %} implements UserInterface {% endif %}
+class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser' %} implements UserInterface
+{% endif %}
 {
 {% for column in entity.columns %}
     /**
@@ -80,14 +81,16 @@ class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser
 {% endif %}
     }
 
+{% if column.name != 'id' %}
     public function set{{ column.name|camelize|ucfirst }}({{ column|php_type }} ${{ column.name|camelize }}): self
     {
         $this->{{ column.name|camelize }} = ${{ column.name|camelize }};
 
         return $this;
     }
-
+{% endif %}
 {% endfor %}
+
 {% if entity.table|entity_name == 'UserUser' %}
     /**
      * A visual identifier that represents this user.
