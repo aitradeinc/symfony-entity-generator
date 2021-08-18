@@ -156,7 +156,7 @@ class Column
 
     public function getOptions(): string
     {
-        return json_encode($this->options);
+        return $this->options ? json_encode($this->options) : '';
     }
 
     /**

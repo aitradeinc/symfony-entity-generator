@@ -26,9 +26,9 @@ class {{ entity.table|entity_name }}
      * @ORM\GeneratedValue
 {% endif %}
 {% autoescape false %}
-     * @ORM\Column(type="{{ column|doctrine_type }}",{{ column.length ? ' length=' ~ column.length ~ ',' }}{{ column
-.precision ? ' precision=' ~ column.precision ~ ',' }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }}{{column
-.nullable ? 'nullable=true,'}}{{ column.options ? 'options=' ~ column.options|replace({'"':''}) }})
+     * @ORM\Column(type="{{ column|doctrine_type }}"{{ column.length ? ', length=' ~ column.length }}{{ column
+.precision ? ', precision=' ~ column.precision }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }}{{column
+.nullable ? ', nullable=true'}}{{ column.options ? ', options=' ~ column.options|replace({'"':'','\'':''}) }})
      */
 {% endautoescape %}
     private ${{ column.name|camelize }};

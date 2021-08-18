@@ -31,12 +31,14 @@ class TypeMapper
             case 'decimal':
                 return 'decimal';
             case 'double':
+                return 'float';
             case 'char':
             case 'varchar':
+                return 'string';
             case 'text':
             case 'mediumtext':
             case 'longtext':
-                return 'string';
+                return 'text';
             case 'timestamp':
             case 'date':
             case 'datetime':
