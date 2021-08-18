@@ -10,12 +10,13 @@ use {{ repositoryNamespace }}\{{ repository|entity_name }};
 use {{ collectionImplementation }};
 use {{ collectionInterface }};
 use Doctrine\ORM\Mapping as ORM;
+{% if entity.table|entity_name == 'UserUser' %}use Symfony\Component\Security\Core\User\UserInterface;{% endif %}
 
 /**
  * @ORM\Table(name="{{ entity.table }}")
  * @ORM\Entity(repositoryClass={{ repository|entity_name }}::class)
  */
-class {{ entity.table|entity_name }}
+class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser' %} implements UserInterface {% endif %}
 {
 {% for column in entity.columns %}
     /**
@@ -26,12 +27,14 @@ class {{ entity.table|entity_name }}
      * @ORM\GeneratedValue
 {% endif %}
 {% autoescape false %}
-     * @ORM\Column(type="{{ column|doctrine_type }}"{{ column.length ? ', length=' ~ column.length }}{{ column
-.precision ? ', precision=' ~ column.precision }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }}{{column
-.nullable ? ', nullable=true'}}{{ column.options ? ', options=' ~ column.options|replace({'"':'','\'':''}) }})
+     * @ORM\Column(type="{{ column|doctrine_type }}"{{ column.length ? ', length=' ~ column.length }}{{ column.precision ? ', precision=' ~ column.precision }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }}{{ column.isUnique ? ', unique=true' }}{{column.nullable ? ', nullable=true'}}{{ column.options ? ', options=' ~ column.options|replace({'"':'','\'':''}) }})
      */
 {% endautoescape %}
+{% if column|doctrine_type == 'json' and entity.table|entity_name == 'UserUser' %}
+    private ${{ column.name|camelize }} = [];
+{% else %}
     private ${{ column.name|camelize }};
+{% endif %}
 
 {% endfor %}
 {% for reference in entity.references %}
@@ -60,9 +63,21 @@ class {{ entity.table|entity_name }}
     }
 
 {% for column in entity.columns %}
-    public function {{ (column|php_type in ['bool', '?bool'] ) ? (column.name[0:2] == 'is' ? '' : 'is') : 'get' }}{{ column.name|camelize|ucfirst }}(): {{ column|php_type }}
+    public function {{ (column|php_type in ['bool', '?bool'] ) ? (column.name[0:2] == 'is' ? '' : 'is') : 'get' }}{{column.name|camelize|ucfirst }}(): {{ reference.nullable ? '?' }}{% if column|php_type == 'array' and entity.table|entity_name == 'UserUser' %}
+    {{column|php_type }}
+{% else %}
+    {{ 'string' }}
+{% endif %}
     {
+    {% if column.name|camelize == 'roles' %}
+        ${{ column.name|camelize }} = $this->{{ column.name|camelize }};
+        // guarantee every user at least has ROLE_USER
+        ${{ column.name|camelize }}[] = 'ROLE_USER';
+
+        return array_unique(${{ column.name|camelize }});
+    {% else %}
         return $this->{{ column.name|camelize }};
+    {% endif %}
     }
 
     public function set{{ column.name|camelize|ucfirst }}({{ column|php_type }} ${{ column.name|camelize }}): self
@@ -73,6 +88,35 @@ class {{ entity.table|entity_name }}
     }
 
 {% endfor %}
+{% if entity.table|entity_name == 'UserUser' %}
+    /**
+    * A visual identifier that represents this user.
+    *
+    * @see UserInterface
+    */
+    public function getUsername(): string
+    {
+    return (string) $this->email;
+    }
+
+    /**
+    * @see UserInterface
+    */
+    public function getSalt()
+    {
+    // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+    * @see UserInterface
+    */
+    public function eraseCredentials()
+    {
+    // if you store any temporary, sensitive data on the user, clear it here
+    // $this->plainPassword = null;
+    }
+{% endif %}
+
 {% for reference in entity.references %}
 {% if reference.owningSide %}
     public function get{{ reference.column|relate|camelize|ucfirst }}(): {{ reference.nullable ? '?' }}{{ reference.table|entity_name }}

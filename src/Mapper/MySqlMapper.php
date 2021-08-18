@@ -144,7 +144,7 @@ class MySqlMapper implements MapperInterface
                             case 'index-column':
                                 $name = $subTree['no_quotes']['parts'][0];
                                 $options['unique'] = true;
-                                $entity->getColumn($name)->setOptions($options);
+                                $entity->getColumn($name)->markUnique();
                                 break;
                         }
                     }
