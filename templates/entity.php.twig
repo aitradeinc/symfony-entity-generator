@@ -28,7 +28,7 @@ class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser
      * @ORM\GeneratedValue
 {% endif %}
 {% autoescape false %}
-     * @ORM\Column(type="{{ column|doctrine_type }}"{{ column.length ? ', length=' ~ column.length }}{{ column.precision ? ', precision=' ~ column.precision }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }}{{ column.isUnique ? ', unique=true' }}{{column.nullable ? ', nullable=true'}}{{ column.options ? ', options=' ~ column.options|replace({'"':'','\'':''}) }})
+     * @ORM\Column(type="{{ column|doctrine_type }}"{{ column.length ? ', length=' ~ column.length }}{{ column.precision ? ', precision=' ~ column.precision }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }}{{ column.isUnique ? ', unique=true' }}{{column.nullable ? ', nullable=true'}}{{ column.options ? ', options=' ~ column.options }})
      */
 {% endautoescape %}
 {% if column|doctrine_type == 'json' and entity.table|entity_name == 'UserUser' %}
@@ -41,14 +41,14 @@ class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser
 {% for reference in entity.references %}
 {% if reference.owningSide %}
     /**
-     * @ORM\ManyToOne(targetEntity="{{ reference.table|entity_name }}::class", inversedBy="{{ entity.table|camelize|pluralize }}")
+     * @ORM\ManyToOne(targetEntity={{ reference.table|entity_name }}::class, inversedBy="{{ entity.table|camelize|pluralize }}")
      * @ORM\JoinColumn(name="{{ reference.column }}", referencedColumnName="{{ reference.referencedColumn }}")
      */
     private ${{ reference.column|relate|camelize }};
 
 {% else %}
     /**
-     * @ORM\OneToMany(targetEntity="{{ reference.table|entity_name }}::class", mappedBy="{{ reference.referencedColumn|relate|camelize }}")
+     * @ORM\OneToMany(targetEntity={{ reference.table|entity_name }}::class, mappedBy="{{ reference.referencedColumn|relate|camelize }}")
      */
     private ${{ reference.table|camelize|pluralize }};
 

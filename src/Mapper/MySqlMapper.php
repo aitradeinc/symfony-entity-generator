@@ -72,7 +72,7 @@ class MySqlMapper implements MapperInterface
                     $generated = $tree['auto_inc'];
                     $comment = $tree['comment'] ?? null;
                     if(isset($tree['default'])) {
-                        $options['default'] = $tree['default'];
+                        $options['default'] = str_replace("'", "", $tree['default']);
                     }
 
                     foreach ($tree['sub_tree'] as $subTree) {
