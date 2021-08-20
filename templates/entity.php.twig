@@ -69,7 +69,7 @@ class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser
     }
 
 {% for column in entity.columns %}
-    public function {{ (column|php_type in ['bool', '?bool'] ) ? (column.name[0:2] == 'is' ? '' : 'is') : 'get' }}{{column.name|camelize|ucfirst }}(): {{ reference.nullable ? '?' }}{% if column.name|camelize == 'roles' and entity.table|entity_name == 'UserUser' %}
+    public function get{{column.name|camelize|ucfirst }}(): {{ reference.nullable ? '?' }}{% if column.name|camelize == 'roles' and entity.table|entity_name == 'UserUser' %}
 {{ 'array' }}
 {% else %}
 {{ column|php_type }}
