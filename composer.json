@@ -6,8 +6,10 @@
   "bin": ["bin/entity-generator"],
   "authors": [
     {
-      "name": "Chirag Soni",
-      "email": "chiragraninga@gmail.com"
+      "name": "AITRADE, INC.",
+      "email": "legal@aitrade.ai",
+      "homepage": "https://www.aitrade.ai",
+      "role": "Code Owner"
     }
   ],
   "repositories": [
