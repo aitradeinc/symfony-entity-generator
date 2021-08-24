@@ -18,8 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="{{ entity.table }}")
  * @ORM\Entity(repositoryClass={{ repository|entity_name }}::class)
  */
-class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser' %} implements UserInterface
-{% endif %}
+class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser' %} implements UserInterface{% endif %}{{ nl2br }}
 {
 {% for column in entity.columns %}
     /**
@@ -87,7 +86,7 @@ class {{ entity.table|entity_name }} {% if entity.table|entity_name == 'UserUser
     }
 
 {% if column.name != 'id' %}
-    public function set{{ column.name|camelize|ucfirst }}({{ column|php_type }} ${{ column.name|camelize }}): self
+    public function set{{ column.name|camelize|ucfirst }}({% if column.name|camelize == 'roles' and entity.table|entity_name == 'UserUser' %}{{ 'array' }}{% else %}{{ column|php_type }}{% endif %} ${{ column.name|camelize }}): self
     {
         $this->{{ column.name|camelize }} = ${{ column.name|camelize }};
 
