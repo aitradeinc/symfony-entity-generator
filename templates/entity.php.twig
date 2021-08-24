@@ -1,0 +1,175 @@
+{# entity \EntityGenerator\Generator\Entity #}
+{# namespace string #}
+{# collectionInterfaceShortName string #}
+{# collectionImplementationShortName string #}
+<?php
+
+namespace {{ namespace }};
+
+use {{ repositoryNamespace }}\{{ repository|entity_name }};
+use {{ collectionImplementation }};
+use {{ collectionInterface }};
+use Doctrine\ORM\Mapping as ORM;
+{% if entity.table|entity_name == 'UserUser' %}use Symfony\Component\Security\Core\User\UserInterface;
+{% endif %}
+use Symfony\Component\Serializer\Annotation\Groups;
+
+/**
+ * @ORM\Table(name="{{ entity.table }}")
+ * @ORM\Entity(repositoryClass={{ repository|entity_name }}::class)
+ */
+class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser' %} implements UserInterface{% endif %}{{ nl2br }}
+{
+{% for column in entity.columns %}
+    /**
+     * @Groups({"public"})
+{% if column.isId %}
+     * @ORM\Id
+{% endif %}
+{% if column.isId and column.isGenerated %}
+     * @ORM\GeneratedValue
+{% endif %}
+{% autoescape false %}
+     * @ORM\Column(type="{{ column|doctrine_type }}"{{ column.length ? ', length=' ~ column.length }}{{ column.precision ? ', precision=' ~ column.precision }}{{ column.scale ? ' scale=' ~ column.scale ~ ',' }}{{ column.isUnique ? ', unique=true' }}{{column.nullable ? ', nullable=true'}}{{ column.options ? ', options=' ~ column.options }})
+     */
+{% endautoescape %}
+{% if column|doctrine_type == 'json' and entity.table|entity_name == 'UserUser' %}
+    private ${{ column.name|camelize }} = [];
+{% else %}
+    private ${{ column.name|camelize }};
+{% endif %}
+
+{% endfor %}
+{% for reference in entity.references %}
+{% if reference.owningSide %}
+    /**
+     * @Groups({"public"})
+     * @ORM\ManyToOne(targetEntity={{ reference.table|entity_name }}::class, inversedBy="{{ entity.table|camelize|pluralize }}")
+     * @ORM\JoinColumn(name="{{ reference.column }}", referencedColumnName="{{ reference.referencedColumn }}")
+     */
+    private ${{ reference.column|relate|camelize }};
+
+{% else %}
+    /**
+     * @Groups({"public"})
+     * @ORM\OneToMany(targetEntity={{ reference.table|entity_name }}::class, mappedBy="{{ reference.referencedColumn|relate|camelize }}")
+     */
+    private ${{ reference.table|camelize|pluralize }};
+
+{% endif %}
+{% endfor %}
+    public function __construct()
+    {
+{% for reference in entity.references %}
+{% if not reference.owningSide %}
+        $this->{{ reference.table|camelize|pluralize }} = new {{ collectionImplementationShortName }}();
+{% endif %}
+{% endfor %}
+    }
+
+{% for column in entity.columns %}
+    public function {{ (column|php_type in ['bool', '?bool'] ) ? (column.name[0:2] == 'is' ? '' : 'is') : 'get' }}{{column.name|camelize|ucfirst }}(): {{ reference.nullable ? '?' }}{% if column.name|camelize == 'roles' and entity.table|entity_name == 'UserUser' %}
+{{ 'array' }}
+{% else %}
+{{ column|php_type }}
+{% endif %}
+    {
+{% if column.name|camelize == 'roles' %}
+        ${{ column.name|camelize }} = $this->{{ column.name|camelize }};
+        // guarantee every user at least has ROLE_USER
+        ${{ column.name|camelize }}[] = 'ROLE_USER';
+
+        return array_unique(${{ column.name|camelize }});
+{% else %}
+        return $this->{{ column.name|camelize }};
+{% endif %}
+    }
+
+{% if column.name != 'id' %}
+    public function set{{ column.name|camelize|ucfirst }}({% if column.name|camelize == 'roles' and entity.table|entity_name == 'UserUser' %}{{ 'array' }}{% else %}{{ column|php_type }}{% endif %} ${{ column.name|camelize }}): self
+    {
+        $this->{{ column.name|camelize }} = ${{ column.name|camelize }};
+
+        return $this;
+    }
+{% endif %}
+
+{% endfor %}
+
+{% if entity.table|entity_name == 'UserUser' %}
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // if you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+{% endif %}
+
+{% for reference in entity.references %}
+{% if reference.owningSide %}
+    public function get{{ reference.column|relate|camelize|ucfirst }}(): {{ reference.nullable ? '?' }}{{ reference.table|entity_name }}
+    {
+        return $this->{{ reference.column|relate|camelize }};
+    }
+
+    public function set{{ reference.column|relate|camelize|ucfirst }}({{ reference.nullable ? '?' }}{{ reference.table|entity_name }} ${{ reference.column|relate|camelize }}): self
+    {
+        $this->{{ reference.column|relate|camelize }} = ${{ reference.column|relate|camelize }};
+
+        return $this;
+    }
+
+{% else %}
+    /**
+     * @return {{ collectionInterfaceShortName }}|{{ reference.table|entity_name }}[]
+     */
+    public function get{{ reference.table|camelize|ucfirst|pluralize }}(): {{ collectionInterfaceShortName }}
+    {
+        return $this->{{ reference.table|camelize|pluralize }};
+    }
+
+    public function add{{ reference.table|camelize|ucfirst }}({{ reference.table|entity_name }} ${{reference.table|camelize }}): self
+    {
+        if (!$this->{{ reference.table|camelize|pluralize }}->contains(${{ reference.table|camelize }})) {
+            $this->{{ reference.table|camelize|pluralize }}[] = ${{ reference.table|camelize }};
+            ${{ reference.table|camelize }}->set{{ reference.referencedColumn|relate|camelize|ucfirst }}($this);
+        }
+
+        return $this;
+    }
+
+    public function remove{{ reference.table|camelize|ucfirst }}({{ reference.table|entity_name }} ${{ reference.table|camelize }}): self
+    {
+        if ($this->{{ reference.table|camelize|pluralize }}->contains(${{ reference.table|camelize }})) {
+            $this->{{ reference.table|camelize|pluralize }}->removeElement(${{ reference.table|camelize }});
+            if(${{ reference.table|camelize }}->get{{ reference.referencedColumn|relate|camelize|ucfirst }}() === $this) {
+                ${{ reference.table|camelize }}->set{{ reference.referencedColumn|relate|camelize|ucfirst }}(null);
+            }
+        }
+
+        return $this;
+    }
+
+{% endif %}
+{% endfor %}
+}

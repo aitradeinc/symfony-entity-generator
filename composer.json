@@ -1,0 +1,36 @@
+{
+  "name": "aitradeinc/symfony-entity-generator",
+  "description": "Generate entities from DB tables",
+  "type": "library",
+  "license": "MIT",
+  "bin": ["bin/entity-generator"],
+  "authors": [
+    {
+      "name": "AITRADE, INC.",
+      "email": "legal@aitrade.ai",
+      "homepage": "https://www.aitrade.ai",
+      "role": "Code Owner"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git://github.com/aitradeinc/symfony-entity-generator.git"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^7.4",
+    "aitradeinc/php-sql-parser": "^0.3",
+    "nyholm/dsn": "^1.0",
+    "symfony/console": "^4.0|^5.0",
+    "symfony/filesystem": "^4.0|^5.0",
+    "twig/twig": "^2.12|^3.0",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "EntityGenerator\\": "src/"
+    }
+  }
+}
