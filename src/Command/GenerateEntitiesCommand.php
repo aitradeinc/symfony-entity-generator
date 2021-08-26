@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Yaml;
 
 class GenerateEntitiesCommand extends Command
 {
@@ -25,7 +26,8 @@ class GenerateEntitiesCommand extends Command
             ->addOption('namespace', null, InputOption::VALUE_REQUIRED, 'Namespace', 'App\\Entity')
             ->addOption('directory', null, InputOption::VALUE_REQUIRED, 'Output directory', 'src\\Entity')
             ->addOption('collection-implementation', null, InputOption::VALUE_REQUIRED, 'Collection implementation', 'Doctrine\\Common\\Collections\\ArrayCollection')
-            ->addOption('collection-interface', null, InputOption::VALUE_REQUIRED, 'Collection interface', 'Doctrine\\Common\\Collections\\Collection');
+            ->addOption('collection-interface', null, InputOption::VALUE_REQUIRED, 'Collection interface', 'Doctrine\\Common\\Collections\\Collection')
+            ->addOption('doctrine-entity-generator', null, InputOption::VALUE_OPTIONAL, 'Specify file path for entity group', '/config/packages/doctrine_entity_generator.yaml');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
@@ -35,6 +37,7 @@ class GenerateEntitiesCommand extends Command
         $collectionImplementation = $input->getOption('collection-implementation');
         $collectionInterface = $input->getOption('collection-interface');
         $outputDirection = $input->getOption('directory');
+        $doctrineEntityGenerator = $input->getOption('doctrine-entity-generator');
 
         if (!$dsnInput) {
             throw new \InvalidArgumentException('A DSN is required');
@@ -56,6 +59,8 @@ class GenerateEntitiesCommand extends Command
             if (strpos($entity->getTable(), 'migration_versions')) {
                 continue;
             }
+            $value = Yaml::parseFile($doctrineEntityGenerator);
+            dd($value);
             $fileName = $outputDirection . '/' . Namer::entityName($entity->getTable()) . '.php';
             $class = $renderer->render($entity, $namespace, $collectionInterface, $collectionImplementation);
             $filesystem->dumpFile($fileName, $class);
