@@ -13,11 +13,20 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 class GenerateEntitiesCommand extends Command
 {
+    private ContainerBuilder $containerBuilder;
+
+    public function __construct(ContainerBuilder $containerBuilder)
+    {
+        parent::__construct();
+        $this->containerBuilder = $containerBuilder;
+    }
+
     public function configure(): void
     {
         $this
@@ -54,13 +63,15 @@ class GenerateEntitiesCommand extends Command
         $generator = new Generator($driver, $mapper);
         $renderer = new Renderer(__DIR__ . '/../../templates');
 
+        $entityGenerator = $this->containerBuilder->getParameter('EntityGenerator');
+
+        dd($entityGenerator);
+
         /** @var Entity $entity */
         foreach ($generator->generateEntities() as $entity) {
             if (strpos($entity->getTable(), 'migration_versions')) {
                 continue;
             }
-            $value = Yaml::parseFile($doctrineEntityGenerator);
-            dd($value);
             $fileName = $outputDirection . '/' . Namer::entityName($entity->getTable()) . '.php';
             $class = $renderer->render($entity, $namespace, $collectionInterface, $collectionImplementation);
             $filesystem->dumpFile($fileName, $class);
