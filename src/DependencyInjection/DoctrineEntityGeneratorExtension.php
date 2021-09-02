@@ -5,9 +5,6 @@ use Exception;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 
-/**
- * SecurityHeadersExtension
- */
 class DoctrineEntityGeneratorExtension extends Extension
 {
     /**
