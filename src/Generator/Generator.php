@@ -59,7 +59,15 @@ class Generator
         if(key_exists($table, $this->entityGroups)) {
             $fields = $this->entityGroups[$table]['fields'];
             foreach ($fields as $column => $value) {
-                $entity->getColumn($column)->setGroup($value);
+                if(in_array($column, $entity->getColumns())) {
+                    $entity->getColumn($column)->setGroup($value);
+                }
+
+                foreach ($entity->getReferences() as $reference) {
+                    if($reference->getTable() == $column) {
+                        $reference->setGroup($value);
+                    }
+                }
             }
         }
     }

@@ -19,13 +19,17 @@ class Reference
     /** @var bool */
     private $isOwningSide;
 
-    public function __construct(string $table, string $column, bool $nullable, string $referencedColumn, bool $isOwningSide = true)
+    private $group;
+
+    public function __construct(string $table, string $column, bool $nullable, string $referencedColumn, bool
+                                       $isOwningSide = true, string $group = 'public')
     {
         $this->table = $table;
         $this->column = $column;
         $this->nullable = $nullable;
         $this->referencedColumn = $referencedColumn;
         $this->isOwningSide = $isOwningSide;
+        $this->group = $group;
     }
 
     public function invert(string $table): Reference
@@ -71,5 +75,21 @@ class Reference
     public function isOwningSide(): bool
     {
         return $this->isOwningSide;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup(): string
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup(string $group): void
+    {
+        $this->group = $group;
     }
 }
