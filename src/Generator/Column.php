@@ -39,6 +39,8 @@ class Column
     /** @var bool */
     private $isUnique = false;
 
+    private $group;
+
     public function __construct(
         string $name,
         string $type,
@@ -49,7 +51,8 @@ class Column
         ?int $length,
         ?int $precision,
         ?int $scale,
-        array $options = []
+        array $options = [],
+        string $group = 'public'
     )
     {
         $this->name = $name;
@@ -62,6 +65,7 @@ class Column
         $this->precision = $precision;
         $this->scale = $scale;
         $this->options = $options;
+        $this->group = $group;
     }
 
     /**
@@ -170,5 +174,15 @@ class Column
     public function markUnique(): void
     {
         $this->isUnique = true;
+    }
+
+    public function getGroup(): string
+    {
+        return $this->group;
+    }
+
+    public function setGroup(string $group): void
+    {
+        $this->group = $group;
     }
 }

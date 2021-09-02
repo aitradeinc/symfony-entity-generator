@@ -15,18 +15,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
 
 class GenerateEntitiesCommand extends Command
 {
-    private ContainerBuilder $containerBuilder;
-
-    public function __construct(ContainerBuilder $containerBuilder)
-    {
-        parent::__construct();
-        $this->containerBuilder = $containerBuilder;
-    }
-
     public function configure(): void
     {
         $this
@@ -35,8 +26,7 @@ class GenerateEntitiesCommand extends Command
             ->addOption('namespace', null, InputOption::VALUE_REQUIRED, 'Namespace', 'App\\Entity')
             ->addOption('directory', null, InputOption::VALUE_REQUIRED, 'Output directory', 'src\\Entity')
             ->addOption('collection-implementation', null, InputOption::VALUE_REQUIRED, 'Collection implementation', 'Doctrine\\Common\\Collections\\ArrayCollection')
-            ->addOption('collection-interface', null, InputOption::VALUE_REQUIRED, 'Collection interface', 'Doctrine\\Common\\Collections\\Collection')
-            ->addOption('doctrine-entity-generator', null, InputOption::VALUE_OPTIONAL, 'Specify file path for entity group', '/config/packages/doctrine_entity_generator.yaml');
+            ->addOption('collection-interface', null, InputOption::VALUE_REQUIRED, 'Collection interface', 'Doctrine\\Common\\Collections\\Collection');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
@@ -46,7 +36,6 @@ class GenerateEntitiesCommand extends Command
         $collectionImplementation = $input->getOption('collection-implementation');
         $collectionInterface = $input->getOption('collection-interface');
         $outputDirection = $input->getOption('directory');
-        $doctrineEntityGenerator = $input->getOption('doctrine-entity-generator');
 
         if (!$dsnInput) {
             throw new \InvalidArgumentException('A DSN is required');
@@ -62,10 +51,6 @@ class GenerateEntitiesCommand extends Command
 
         $generator = new Generator($driver, $mapper);
         $renderer = new Renderer(__DIR__ . '/../../templates');
-
-        $entityGenerator = $this->containerBuilder->getParameter('EntityGenerator');
-
-        dd($entityGenerator);
 
         /** @var Entity $entity */
         foreach ($generator->generateEntities() as $entity) {

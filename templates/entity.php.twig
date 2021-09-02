@@ -22,7 +22,7 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
 {
 {% for column in entity.columns %}
     /**
-     * @Groups({"public"})
+     * @Groups({"{{ column.group }}"})
 {% if column.isId %}
      * @ORM\Id
 {% endif %}

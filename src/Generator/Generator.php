@@ -4,6 +4,7 @@ namespace EntityGenerator\Generator;
 
 use EntityGenerator\Driver\DriverInterface;
 use EntityGenerator\Mapper\MapperInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class Generator
 {
@@ -13,10 +14,16 @@ class Generator
     /** @var MapperInterface */
     private $mapper;
 
+    private array $entityGroups;
+
     public function __construct(DriverInterface $driver, MapperInterface $mapper)
     {
         $this->driver = $driver;
         $this->mapper = $mapper;
+
+        $doctrineEntityGenerator = __DIR__ . '/../../../../../config/packages/doctrine_entity_generator.yaml';
+        $doctrineEntityGeneratorGroups = Yaml::parseFile($doctrineEntityGenerator);
+        $this->entityGroups = $doctrineEntityGeneratorGroups['doctrine_entity_generator']['tables'];
     }
 
     public function generateEntities(): array
@@ -34,6 +41,7 @@ class Generator
          * @var Entity $entity
          */
         foreach ($entities as $table => $entity) {
+            $this->setGroup($table, $entity);
             foreach ($entity->getReferences() as $reference) {
                 if ($reference->isOwningSide()) {
                     /** @var Entity $referencedEntity */
@@ -44,5 +52,15 @@ class Generator
         }
 
         return array_values($entities);
+    }
+
+    private function setGroup(string $table, Entity $entity)
+    {
+        if(key_exists($table, $this->entityGroups)) {
+            $fields = $this->entityGroups[$table]['fields'];
+            foreach ($fields as $column => $value) {
+                $entity->getColumn($column)->setGroup($value);
+            }
+        }
     }
 }
