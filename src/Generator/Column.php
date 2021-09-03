@@ -160,7 +160,7 @@ class Column
 
     public function getOptions(): string
     {
-        return $this->options ? json_encode($this->options) : '';
+        return $this->options ? json_encode($this->options, JSON_NUMERIC_CHECK) : '';
     }
 
     /**

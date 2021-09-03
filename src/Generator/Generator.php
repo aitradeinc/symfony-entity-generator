@@ -43,6 +43,7 @@ class Generator
         foreach ($entities as $table => $entity) {
             $this->setGroup($table, $entity);
             foreach ($entity->getReferences() as $reference) {
+                $this->setGroupForReferences($table, $reference, $reference->isOwningSide());
                 if ($reference->isOwningSide()) {
                     /** @var Entity $referencedEntity */
                     $referencedEntity = $entities[$reference->getTable()];
@@ -56,17 +57,27 @@ class Generator
 
     private function setGroup(string $table, Entity $entity)
     {
-        if(key_exists($table, $this->entityGroups)) {
+        if (key_exists($table, $this->entityGroups) && !empty($this->entityGroups[$table]['fields'])) {
             $fields = $this->entityGroups[$table]['fields'];
             foreach ($fields as $column => $value) {
-                if(in_array($column, $entity->getColumns())) {
+                if (key_exists($column, $entity->getColumns())) {
                     $entity->getColumn($column)->setGroup($value);
                 }
+            }
+        }
+    }
 
-                foreach ($entity->getReferences() as $reference) {
-                    if($reference->getTable() == $column) {
-                        $reference->setGroup($value);
-                    }
+    private function setGroupForReferences(string $table, Reference $reference, bool $isOwningSide)
+    {
+        if (key_exists($table, $this->entityGroups) && !empty($this->entityGroups[$table]['references'])) {
+            $referenceColumns = $this->entityGroups[$table]['references'];
+            foreach ($referenceColumns as $column => $value) {
+                if ($isOwningSide && Namer::relate($reference->getColumn()) == $column) {
+                    $reference->setGroup($value);
+                }
+
+                if ($reference->getTable() == $column) {
+                    $reference->setGroup($value);
                 }
             }
         }
