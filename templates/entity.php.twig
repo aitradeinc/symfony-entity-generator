@@ -43,7 +43,7 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
 {% for reference in entity.references %}
 {% if reference.owningSide %}
     /**
-     * @Groups({"public"})
+     * @Groups({"{{ reference.group }}"})
      * @ORM\ManyToOne(targetEntity={{ reference.table|entity_name }}::class, inversedBy="{{ entity.table|camelize|pluralize }}")
      * @ORM\JoinColumn(name="{{ reference.column }}", referencedColumnName="{{ reference.referencedColumn }}")
      */
@@ -51,7 +51,7 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
 
 {% else %}
     /**
-     * @Groups({"public"})
+     * @Groups({"{{ reference.group }}"})
      * @ORM\OneToMany(targetEntity={{ reference.table|entity_name }}::class, mappedBy="{{ reference.referencedColumn|relate|camelize }}")
      */
     private ${{ reference.table|camelize|pluralize }};
