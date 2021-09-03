@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8895b5eb6f4cd658b45c66fba84d36ea",
+    "content-hash": "6a29b026836ed90a713b92cabe5969cf",
     "packages": [
         {
             "name": "aitradeinc/php-sql-parser",
@@ -1037,12 +1037,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "ae124bf6f1c35be0de9edb140a26b8576533fb49"
+                "reference": "5dc09b77cb5a27c0776bf17afeb663a65fbf32f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/ae124bf6f1c35be0de9edb140a26b8576533fb49",
-                "reference": "ae124bf6f1c35be0de9edb140a26b8576533fb49",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/5dc09b77cb5a27c0776bf17afeb663a65fbf32f8",
+                "reference": "5dc09b77cb5a27c0776bf17afeb663a65fbf32f8",
                 "shasum": ""
             },
             "require": {
@@ -1141,7 +1141,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-26T08:23:47+00:00"
+            "time": "2021-09-03T12:07:42+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -2094,11 +2094,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "symfony/dependency-injection": 20,
-        "symfony/config": 20,
-        "symfony/http-kernel": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
