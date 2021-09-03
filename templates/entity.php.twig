@@ -66,8 +66,8 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
 {% endif %}
 {% endfor %}
     }
-
 {% for column in entity.columns %}
+
     public function get{{column.name|camelize|ucfirst }}(): {{ reference.nullable ? '?' }}{% if column.name|camelize == 'roles' and entity.table|entity_name == 'UserUser' %}
 {{ 'array' }}
 {% else %}
@@ -84,8 +84,8 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
         return $this->{{ column.name|camelize }};
 {% endif %}
     }
-
 {% if column.name != 'id' %}
+
     public function set{{ column.name|camelize|ucfirst }}({% if column.name|camelize == 'roles' and entity.table|entity_name == 'UserUser' %}{{ 'array' }}{% else %}{{ column|php_type }}{% endif %} ${{ column.name|camelize }}): self
     {
         $this->{{ column.name|camelize }} = ${{ column.name|camelize }};
@@ -93,10 +93,9 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
         return $this;
     }
 {% endif %}
-
 {% endfor %}
-
 {% if entity.table|entity_name == 'UserUser' %}
+
     /**
      * A visual identifier that represents this user.
      *
@@ -124,9 +123,9 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
         // $this->plainPassword = null;
     }
 {% endif %}
-
 {% for reference in entity.references %}
 {% if reference.owningSide %}
+
     public function get{{ reference.column|relate|camelize|ucfirst }}(): {{ reference.nullable ? '?' }}{{ reference.table|entity_name }}
     {
         return $this->{{ reference.column|relate|camelize }};
@@ -138,8 +137,8 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
 
         return $this;
     }
-
 {% else %}
+
     /**
      * @return {{ collectionInterfaceShortName }}|{{ reference.table|entity_name }}[]
      */
@@ -162,14 +161,13 @@ class {{ entity.table|entity_name }}{% if entity.table|entity_name == 'UserUser'
     {
         if ($this->{{ reference.table|camelize|pluralize }}->contains(${{ reference.table|camelize }})) {
             $this->{{ reference.table|camelize|pluralize }}->removeElement(${{ reference.table|camelize }});
-            if(${{ reference.table|camelize }}->get{{ reference.referencedColumn|relate|camelize|ucfirst }}() === $this) {
+            if (${{ reference.table|camelize }}->get{{ reference.referencedColumn|relate|camelize|ucfirst }}() === $this) {
                 ${{ reference.table|camelize }}->set{{ reference.referencedColumn|relate|camelize|ucfirst }}(null);
             }
         }
 
         return $this;
     }
-
 {% endif %}
 {% endfor %}
 }
